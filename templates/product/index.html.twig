@@ -1,125 +1,132 @@
 {% extends 'base.html.twig' %}
-{% block title %}Shop — SymPET{% endblock %}
+{% block title %}Shop — SymPET
+{% endblock %}
 
 {% block stylesheets %}
-<style>
-.filter-card { position: sticky; top: 20px; }
-.pagination .page-item .page-link { color: #0d6efd; }
-.pagination .page-item.active .page-link { background: #0d6efd; border-color: #0d6efd; color: white; }
-</style>
+	<style>
+		.filter-card {
+			position: sticky;
+			top: 20px;
+		}
+		.pagination .page-item .page-link {
+			color: #0d6efd;
+		}
+		.pagination .page-item.active .page-link {
+			background: #0d6efd;
+			border-color: #0d6efd;
+			color: white;
+		}
+	</style>
 {% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <div class="row">
+	<div class="container mt-4">
+		<div
+			class="row">
 
-        {# LEFT SIDEBAR — Filters #}
-        <div class="col-md-3">
-            <div class="card shadow-sm filter-card">
-                <div class="card-header bg-primary text-white fw-bold">
-                    🔍 Filters
-                </div>
-                <div class="card-body">
-                    <form method="GET">
-                        {# Search #}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Search</label>
-                            <input type="text" name="q" value="{{ query }}"
-                                   class="form-control" placeholder="Search...">
-                        </div>
+			{# LEFT SIDEBAR — Filters #}
+			<div class="col-md-3">
+				<div class="card shadow-sm filter-card">
+					<div class="card-header bg-primary text-white fw-bold">
+						🔍 Filters
+					</div>
+					<div class="card-body">
+						<form
+							method="GET">
+							{# Search #}
+							<div class="mb-3">
+								<label class="form-label fw-bold">Search</label>
+								<input type="text" name="q" value="{{ query }}" class="form-control" placeholder="Search...">
+							</div>
 
-                        {# Category #}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Category</label>
-                            <select name="category" class="form-select">
-                                <option value="">All categories</option>
-                                {% for cat in categories %}
-                                    <option value="{{ cat.id }}"
-                                        {% if selectedCat == cat.id %}selected{% endif %}>
-                                        {{ cat.name }}
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
+							{# Category #}
+							<div class="mb-3">
+								<label class="form-label fw-bold">Category</label>
+								<select name="category" class="form-select">
+									<option value="">All categories</option>
+									{% for cat in categories %}
+										<option value="{{ cat.id }}" {% if selectedCat == cat.id %} selected {% endif %}>
+											{{ cat.name }}
+										</option>
+									{% endfor %}
+								</select>
+							</div>
 
-                        {# Animal Type #}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Animal Type</label>
-                            <select name="animal" class="form-select">
-                                <option value="">All animals</option>
-                                <option value="dog" {% if animalType == 'dog' %}selected{% endif %}>🐶 Dog</option>
-                                <option value="cat" {% if animalType == 'cat' %}selected{% endif %}>🐱 Cat</option>
-                                <option value="bird" {% if animalType == 'bird' %}selected{% endif %}>🐦 Bird</option>
-                                <option value="fish" {% if animalType == 'fish' %}selected{% endif %}>🐠 Fish</option>
-                                <option value="rabbit" {% if animalType == 'rabbit' %}selected{% endif %}>🐰 Rabbit</option>
-                            </select>
-                        </div>
+							{# Animal Type #}
+							<div class="mb-3">
+								<label class="form-label fw-bold">Animal Type</label>
+								<select name="animal" class="form-select">
+									<option value="">All animals</option>
+									<option value="dog" {% if animalType == 'dog' %} selected {% endif %}>🐶 Dog</option>
+									<option value="cat" {% if animalType == 'cat' %} selected {% endif %}>🐱 Cat</option>
+									<option value="bird" {% if animalType == 'bird' %} selected {% endif %}>🐦 Bird</option>
+									<option value="fish" {% if animalType == 'fish' %} selected {% endif %}>🐠 Fish</option>
+									<option value="rabbit" {% if animalType == 'rabbit' %} selected {% endif %}>🐰 Rabbit</option>
+								</select>
+							</div>
 
-                        {# Price Range #}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Price Range (TND)</label>
-                            <div class="d-flex gap-2">
-                                <input type="number" name="min_price" value="{{ minPrice }}"
-                                       class="form-control" placeholder="Min" min="0">
-                                <input type="number" name="max_price" value="{{ maxPrice }}"
-                                       class="form-control" placeholder="Max" min="0">
-                            </div>
-                        </div>
+							{# Price Range #}
+							<div class="mb-3">
+								<label class="form-label fw-bold">Price Range (TND)</label>
+								<div class="d-flex gap-2">
+									<input type="number" name="min_price" value="{{ minPrice }}" class="form-control" placeholder="Min" min="0">
+									<input type="number" name="max_price" value="{{ maxPrice }}" class="form-control" placeholder="Max" min="0">
+								</div>
+							</div>
 
-                        <button class="btn btn-primary w-100">Apply Filters</button>
-                        <a href="{{ path('product_index') }}" class="btn btn-outline-secondary w-100 mt-2">
-                            Clear Filters
-                        </a>
-                    </form>
-                </div>
-            </div>
-        </div>
+							<button class="btn btn-primary w-100">Apply Filters</button>
+							<a href="{{ path('product_index') }}" class="btn btn-outline-secondary w-100 mt-2">
+								Clear Filters
+							</a>
+						</form>
+					</div>
+				</div>
+			</div>
 
-        {# RIGHT — Products grid #}
-        <div class="col-md-9">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="mb-0">{{ products.getTotalItemCount() }} products found</h5>
-            </div>
+			{# RIGHT — Products grid #}
+			<div class="col-md-9">
+				<div class="d-flex justify-content-between align-items-center mb-3">
+					<h5 class="mb-0">{{ products.getTotalItemCount() }}
+						products found</h5>
+				</div>
 
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for product in products %}
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <img src="{{ product.imagePath }}"
-                             class="card-img-top"
-                             style="height:200px; object-fit:cover"
-                             alt="{{ product.name }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ product.name }}</h5>
-                            <p class="text-primary fw-bold fs-5">{{ product.price }} TND</p>
-                            <p class="text-muted small">
-                                {{ product.category.name }}
-                                {% if product.animalType %}
-                                    • {% if product.animalType == 'dog' %}🐶{% elseif product.animalType == 'cat' %}🐱{% elseif product.animalType == 'bird' %}🐦{% elseif product.animalType == 'fish' %}🐠{% else %}🐰{% endif %}
-                                    {{ product.animalType|capitalize }}
-                                {% endif %}
-                            </p>
-                        </div>
-                        <div class="card-footer d-flex gap-2">
-                            <a href="{{ path('product_show', {id: product.id}) }}"
-                               class="btn btn-outline-secondary flex-fill">View Detail</a>
-                            <a href="#"
-                               class="btn btn-primary flex-fill">Add to Cart</a>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                <div class="col-12">
-                    <div class="alert alert-info">No products found. Try different filters.</div>
-                </div>
-            {% endfor %}
-            </div>
+				<div class="row row-cols-1 row-cols-md-3 g-4">
+					{% for product in products %}
+						<div class="col">
+							<div class="card h-100 shadow-sm">
+								<img src="{{ product.imagePath }}" class="card-img-top" style="height:200px; object-fit:cover" alt="{{ product.name }}">
+								<div class="card-body">
+									<h5 class="card-title">{{ product.name }}</h5>
+									<p class="text-primary fw-bold fs-5">{{ product.price }}
+										TND</p>
+									<p class="text-muted small">
+										{{ product.category.name }}
+										{% if product.animalType %}
+											•
+											{% if product.animalType == 'dog' %}🐶{% elseif product.animalType == 'cat' %}🐱{% elseif product.animalType == 'bird' %}🐦{% elseif product.animalType == 'fish' %}🐠{% else %}🐰
+											{% endif %}
+											{{ product.animalType|capitalize }}
+										{% endif %}
+									</p>
+								</div>
+								<div class="card-footer d-flex gap-2">
+									<a href="{{ path('product_show', {id: product.id}) }}" class="btn btn-outline-secondary flex-fill">View Detail</a>
+									<a href="{{ path('cart_add', {id: product.id}) }}" class="btn btn-primary flex-fill">Add to Cart</a>
+								</div>
+							</div>
+						</div>
+					{% else %}
+						<div class="col-12">
+							<div class="alert alert-info">No products found. Try different filters.</div>
+						</div>
+					{% endfor %}
+				</div>
 
-            <div class="d-flex justify-content-center mt-4">
-                {{ knp_pagination_render(products) }}
-            </div>
-        </div>
+				<div class="d-flex justify-content-center mt-4">
+					{{ knp_pagination_render(products) }}
+				</div>
+			</div>
 
-    </div>
-</div>
+		</div>
+	</div>
 {% endblock %}
