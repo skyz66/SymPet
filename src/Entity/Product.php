@@ -31,6 +31,9 @@ class Product
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    #[ORM\Column(length: 50, nullable: true)]
+    private ?string $animalType = null;
+
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
@@ -66,4 +69,7 @@ class Product
     {
         return $this->imageUrl ?? 'https://placehold.co/400x300?text=No+Image';
     }
+
+    public function getAnimalType(): ?string { return $this->animalType; }
+    public function setAnimalType(?string $type): static { $this->animalType = $type; return $this; }
 }

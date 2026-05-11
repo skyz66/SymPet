@@ -20,8 +20,11 @@ class ProductController extends AbstractController
     ): Response {
         $query      = $request->query->get('q');
         $categoryId = $request->query->getInt('category');
+        $animalType = $request->query->get('animal');
+        $minPrice   = $request->query->get('min_price') ? (float) $request->query->get('min_price') : null;
+        $maxPrice   = $request->query->get('max_price') ? (float) $request->query->get('max_price') : null;
 
-        $queryBuilder = $productRepo->search($query, $categoryId ?: null);
+        $queryBuilder = $productRepo->search($query, $categoryId ?: null, $animalType, $minPrice, $maxPrice);
 
         $products = $paginator->paginate(
             $queryBuilder,
@@ -36,6 +39,9 @@ class ProductController extends AbstractController
             'categories'  => $categories,
             'query'       => $query,
             'selectedCat' => $categoryId,
+            'animalType'  => $animalType,
+            'minPrice'    => $minPrice,
+            'maxPrice'    => $maxPrice,
         ]);
     }
 
