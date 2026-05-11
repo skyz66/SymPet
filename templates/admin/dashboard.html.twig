@@ -1,0 +1,120 @@
+{% extends 'base.html.twig' %}
+{% block title %}Dashboard — SymPET Admin{% endblock %}
+
+{% block body %}
+<h2 class="mb-4">📊 Admin Dashboard</h2>
+
+{# Stat cards #}
+<div class="row g-3 mb-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Total Revenue</h5>
+                <p class="card-text fs-3 fw-bold">{{ totalRevenue|number_format(2) }} €</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Total Clients</h5>
+                <p class="card-text fs-3 fw-bold">{{ totalClients }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-warning h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Pending Orders</h5>
+                <p class="card-text fs-3 fw-bold">{{ pendingOrders }}</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info h-100">
+            <div class="card-body text-center">
+                <h5 class="card-title">Paid Orders</h5>
+                <p class="card-text fs-3 fw-bold">{{ paidOrders }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Charts row 1 #}
+<div class="row g-3 mb-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header fw-bold">Revenue by Month (€)</div>
+            <div class="card-body">
+                <canvas id="revenueChart" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header fw-bold">Top Selling Products</div>
+            <div class="card-body">
+                <canvas id="topProductsChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# Charts row 2 #}
+<div class="row g-3">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header fw-bold">Orders per Month</div>
+            <div class="card-body">
+                <canvas id="ordersChart" height="80"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Revenue chart
+new Chart(document.getElementById('revenueChart'), {
+    type: 'line',
+    data: {
+        labels: {{ revenueLabels|json_encode|raw }},
+        datasets: [{
+            label: 'Revenue (€)',
+            data: {{ revenueData|json_encode|raw }},
+            borderColor: '#0d6efd',
+            backgroundColor: 'rgba(13,110,253,0.1)',
+            fill: true,
+            tension: 0.4
+        }]
+    }
+});
+
+// Top products chart
+new Chart(document.getElementById('topProductsChart'), {
+    type: 'doughnut',
+    data: {
+        labels: {{ topProductNames|json_encode|raw }},
+        datasets: [{
+            data: {{ topProductSales|json_encode|raw }},
+            backgroundColor: ['#0d6efd','#198754','#ffc107','#dc3545','#0dcaf0']
+        }]
+    }
+});
+
+// Orders per month chart
+new Chart(document.getElementById('ordersChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ orderLabels|json_encode|raw }},
+        datasets: [{
+            label: 'Number of Orders',
+            data: {{ orderData|json_encode|raw }},
+            backgroundColor: '#198754'
+        }]
+    }
+});
+</script>
+{% endblock %}
