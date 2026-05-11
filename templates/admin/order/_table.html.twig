@@ -1,0 +1,36 @@
+{% if orders is empty %}
+    <p class="text-muted">No {{ status }} orders.</p>
+{% else %}
+    <table class="table table-hover mb-4">
+        <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>#{{ order.id }}</td>
+                <td>{{ order.user.firstName }} {{ order.user.lastName }}</td>
+                <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                <td class="fw-bold">{{ order.total }} TND</td>
+                <td class="d-flex gap-1">
+                    {% if status == 'pending' %}
+                        <a href="{{ path('admin_order_status', {id: order.id, status: 'paid'}) }}"
+                           class="btn btn-sm btn-success">Mark Paid</a>
+                        <a href="{{ path('admin_order_status', {id: order.id, status: 'cancelled'}) }}"
+                           class="btn btn-sm btn-danger">Cancel</a>
+                    {% elseif status == 'paid' %}
+                        <a href="{{ path('admin_order_status', {id: order.id, status: 'shipped'}) }}"
+                           class="btn btn-sm btn-info">Mark Shipped</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
