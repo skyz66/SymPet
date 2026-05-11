@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+{% block title %}Shop — SymPET{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <form method="GET" class="row g-2 mb-4">
+        <div class="col-md-6">
+            <input type="text" name="q" value="{{ query }}"
+                   class="form-control" placeholder="Search products...">
+        </div>
+        <div class="col-md-4">
+            <select name="category" class="form-select">
+                <option value="">All categories</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}"
+                        {% if selectedCat == cat.id %}selected{% endif %}>
+                        {{ cat.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button class="btn btn-primary w-100">Search</button>
+        </div>
+    </form>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for product in products %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                <img src="{{ product.imagePath }}"
+                     class="card-img-top"
+                     style="height:200px; object-fit:cover"
+                     alt="{{ product.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ product.name }}</h5>
+                    <p class="text-primary fw-bold fs-5">{{ product.price }} TND</p>
+                    <p class="text-muted small">{{ product.category.name }}</p>
+                </div>
+                <div class="card-footer d-flex gap-2">
+                    <a href="{{ path('product_show', {id: product.id}) }}"
+                       class="btn btn-outline-secondary flex-fill">View Detail</a>
+                    <a href="#"
+                       class="btn btn-primary flex-fill">Add to Cart</a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <p class="text-muted">No products found.</p>
+    {% endfor %}
+    </div>
+</div>
+{% endblock %}
