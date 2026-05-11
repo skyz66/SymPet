@@ -12,7 +12,7 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function search(?string $query, ?int $categoryId): array
+    public function search(?string $query, ?int $categoryId): \Doctrine\ORM\QueryBuilder
     {
         $qb = $this->createQueryBuilder('p')
             ->leftJoin('p.category', 'c')
@@ -20,17 +20,15 @@ class ProductRepository extends ServiceEntityRepository
 
         if ($query) {
             $qb->andWhere('p.name LIKE :q OR p.description LIKE :q')
-               ->setParameter('q', '%' . $query . '%');
+                ->setParameter('q', '%' . $query . '%');
         }
 
         if ($categoryId) {
             $qb->andWhere('p.category = :cat')
-               ->setParameter('cat', $categoryId);
-        }
+                ->setParameter('cat', $categoryId);
+    }
 
-        return $qb->orderBy('p.name', 'ASC')
-                  ->getQuery()
-                  ->getResult();
+    return $qb->orderBy('p.name', 'ASC');
     }
 
     public function findMostSold(): array

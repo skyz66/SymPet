@@ -3,6 +3,7 @@ namespace App\Controller;
 
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,12 +15,20 @@ class ProductController extends AbstractController
     public function index(
         Request $request,
         ProductRepository $productRepo,
-        CategoryRepository $categoryRepo
+        CategoryRepository $categoryRepo,
+        PaginatorInterface $paginator
     ): Response {
         $query      = $request->query->get('q');
         $categoryId = $request->query->getInt('category');
 
-        $products   = $productRepo->search($query, $categoryId ?: null);
+        $queryBuilder = $productRepo->search($query, $categoryId ?: null);
+
+        $products = $paginator->paginate(
+            $queryBuilder,
+            $request->query->getInt('page', 1),
+            6
+        );
+
         $categories = $categoryRepo->findAll();
 
         return $this->render('product/index.html.twig', [
