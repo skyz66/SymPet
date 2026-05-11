@@ -18,6 +18,7 @@
 					<div class="navbar-nav ms-auto d-flex flex-row gap-3 align-items-center">
 						<a href="{{ path('product_index') }}" class="nav-link text-white">Shop</a>
 						{% if is_granted('ROLE_USER') %}
+                        <a href="{{ path('order_history') }}" class="nav-link text-white">📦 Orders</a>
 							<a href="{{ path('cart_index') }}" class="nav-link text-white">
 								🛒 Cart ({{ cart_count ?? 0 }})
 							</a>
