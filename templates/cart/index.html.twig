@@ -2,76 +2,56 @@
 {% block title %}Cart — SymPET{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h2>🛒 My Cart</h2>
+<div class="page-hero mb-4">
+    <div class="eyebrow">Shopping cart</div>
+    <h1 class="display-6 fw-bold mb-0">Your cart</h1>
+</div>
 
-    {% if items is empty %}
-        <div class="alert alert-info mt-3">
-            Your cart is empty.
-            <a href="{{ path('product_index') }}">Continue shopping</a>
-        </div>
-    {% else %}
+{% if items is empty %}
+    <div class="empty-state">
+        <h2 class="h4 fw-bold">Your cart is empty.</h2>
+        <p class="text-muted">Find something useful for your pet and add it here.</p>
+        <a href="{{ path('product_index') }}" class="btn btn-primary">Continue shopping</a>
+    </div>
+{% else %}
+    <div class="card">
         <div class="table-responsive">
             <table class="table table-hover align-middle">
-                <thead class="table-primary">
-                    <tr>
-                        <th>Product</th>
-                        <th>Image</th>
-                        <th>Unit Price</th>
-                        <th>Quantity</th>
-                        <th>Subtotal</th>
-                        <th>Action</th>
-                    </tr>
+                <thead>
+                    <tr><th>Product</th><th>Unit Price</th><th>Quantity</th><th>Subtotal</th><th class="text-end">Action</th></tr>
                 </thead>
                 <tbody>
                 {% for item in items %}
                     <tr>
-                        <td>{{ item.product.name }}</td>
                         <td>
-                            <img src="{{ item.product.imagePath }}"
-                                 style="height:60px; width:60px; object-fit:cover"
-                                 class="rounded">
+                            <div class="d-flex align-items-center gap-3">
+                                <img src="{{ item.product.imagePath }}" style="height:72px; width:72px; object-fit:cover" class="rounded-4" alt="{{ item.product.name }}">
+                                <strong>{{ item.product.name }}</strong>
+                            </div>
                         </td>
                         <td>{{ item.product.price }} TND</td>
                         <td>
-                            <form method="POST"
-                                  action="{{ path('cart_update', {id: item.product.id}) }}"
-                                  class="d-flex align-items-center gap-2">
-                                <input type="number" name="qty" value="{{ item.qty }}"
-                                       min="1" max="{{ item.product.stock }}"
-                                       class="form-control" style="width:80px">
+                            <form method="POST" action="{{ path('cart_update', {id: item.product.id}) }}" class="d-flex align-items-center gap-2">
+                                <input type="number" name="qty" value="{{ item.qty }}" min="1" max="{{ item.product.stock }}" class="form-control" style="width:90px">
                                 <button class="btn btn-sm btn-outline-primary">Update</button>
                             </form>
                         </td>
-                        <td class="fw-bold">{{ item.subtotal|number_format(2) }} TND</td>
-                        <td>
-                            <a href="{{ path('cart_remove', {id: item.product.id}) }}"
-                               class="btn btn-sm btn-danger"
-                               onclick="return confirm('Remove this product?')">
-                                🗑 Remove
-                            </a>
+                        <td class="fw-bold text-brand">{{ item.subtotal|number_format(2) }} TND</td>
+                        <td class="text-end">
+                            <a href="{{ path('cart_remove', {id: item.product.id}) }}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Remove this product?')">Remove</a>
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
                 <tfoot>
-                    <tr>
-                        <td colspan="4" class="text-end fw-bold fs-5">Total:</td>
-                        <td class="fw-bold fs-5 text-primary">{{ total|number_format(2) }} TND</td>
-                        <td></td>
-                    </tr>
+                    <tr><td colspan="3" class="text-end fw-bold fs-5">Total:</td><td class="fw-bold fs-5 text-brand">{{ total|number_format(2) }} TND</td><td></td></tr>
                 </tfoot>
             </table>
         </div>
-
-        <div class="d-flex justify-content-between mt-3">
-            <a href="{{ path('product_index') }}" class="btn btn-outline-secondary">
-                ← Continue Shopping
-            </a>
-            <a href="{{ path('payment_checkout') }}" class="btn btn-success btn-lg">
-                Proceed to Payment →
-            </a>
-        </div>
-    {% endif %}
-</div>
+    </div>
+    <div class="d-flex flex-column flex-md-row justify-content-between gap-2 mt-4">
+        <a href="{{ path('product_index') }}" class="btn btn-outline-secondary">← Continue Shopping</a>
+        <a href="{{ path('payment_checkout') }}" class="btn btn-primary btn-lg">Proceed to Payment →</a>
+    </div>
+{% endif %}
 {% endblock %}

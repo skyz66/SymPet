@@ -1,32 +1,178 @@
 {% extends 'base.html.twig' %}
-{% block title %}
-	{{ product.name }}
-	— SymPET
+{% block title %}{{ product.name }} - SymPET{% endblock %}
+
+{% block stylesheets %}
+{{ parent() }}
+<style>
+    .star-rating {
+        display: inline-flex;
+        flex-direction: row-reverse;
+        gap: .25rem;
+    }
+    .star-rating input {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+    .star-rating label {
+        cursor: pointer;
+        font-size: 1.5rem;
+        color: #c9ced6;
+        transition: color .15s ease-in-out;
+    }
+    .star-rating label:hover,
+    .star-rating label:hover ~ label,
+    .star-rating input:checked ~ label {
+        color: #f4b400;
+    }
+</style>
 {% endblock %}
 
 {% block body %}
-	<div class="container mt-4">
-		<div class="row">
-			<div class="col-md-5">
-				<img src="{{ product.imagePath }}" class="img-fluid rounded shadow" alt="{{ product.name }}">
-			</div>
-			<div class="col-md-7">
-				<h2>{{ product.name }}</h2>
-				<p class="text-muted">{{ product.category.name }}</p>
-				<h3 class="text-primary">{{ product.price }}
-					TND</h3>
-				<p>{{ product.description }}</p>
-				<p>
-					{% if product.stock > 0 %}
-						<span class="badge bg-success">In stock:
-							{{ product.stock }}</span>
-					{% else %}
-						<span class="badge bg-danger">Out of stock</span>
-					{% endif %}
-				</p>
-				<a href="{{ path('cart_add', {id: product.id}) }}" class="btn btn-primary flex-fill">Add to Cart</a>
-				<a href="{{ path('product_index') }}" class="btn btn-outline-secondary btn-lg">Back to Shop</a>
-			</div>
-		</div>
-	</div>
+<div class="mb-4"><a href="{{ path('product_index') }}" class="btn btn-outline-primary">Back to Shop</a></div>
+<div class="card p-0 mb-4">
+    <div class="row g-0 align-items-stretch">
+        <div class="col-lg-5 bg-light">
+            <img src="{{ product.imagePath }}" class="w-100 h-100" style="min-height: 360px; object-fit: cover;" alt="{{ product.name }}">
+        </div>
+        <div class="col-lg-7">
+            <div class="p-4 p-lg-5">
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge bg-light text-brand border">{{ product.category.name }}</span>
+                    {% if product.animalType %}<span class="badge bg-light text-muted border">{{ product.animalType|capitalize }}</span>{% endif %}
+                </div>
+                <h1 class="display-6 fw-bold mb-3">{{ product.name }}</h1>
+
+                {% if ratingStats.reviewsCount > 0 %}
+                    <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                        <span class="text-warning">
+                            {% for i in 1..5 %}
+                                {% if ratingStats.averageRating >= i %}
+                                    <i class="fa-solid fa-star"></i>
+                                {% elseif ratingStats.averageRating >= i - 0.5 %}
+                                    <i class="fa-solid fa-star-half-stroke"></i>
+                                {% else %}
+                                    <i class="fa-regular fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="fw-semibold">{{ ratingStats.averageRating }}/5</span>
+                        <span class="text-muted">({{ ratingStats.reviewsCount }} review{{ ratingStats.reviewsCount > 1 ? 's' : '' }})</span>
+                    </div>
+                {% else %}
+                    <p class="text-muted mb-3">No reviews yet for this product.</p>
+                {% endif %}
+
+                <p class="text-muted fs-5">{{ product.description }}</p>
+                <div class="d-flex align-items-center gap-3 my-4">
+                    <div class="display-6 fw-bold text-brand mb-0">{{ product.price }} TND</div>
+                    {% if product.stock > 0 %}
+                        <span class="badge bg-success">In stock: {{ product.stock }}</span>
+                    {% else %}
+                        <span class="badge bg-danger">Out of stock</span>
+                    {% endif %}
+                </div>
+                <div class="d-flex flex-column flex-sm-row gap-2">
+                    <a href="{{ path('cart_add', {id: product.id}) }}" class="btn btn-primary btn-lg flex-fill">Add to Cart</a>
+                    <a href="{{ path('product_index') }}" class="btn btn-outline-secondary btn-lg flex-fill">Continue Shopping</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card">
+            <div class="card-header fw-bold">Rate This Product</div>
+            <div class="card-body">
+                {% if app.user %}
+                    <form method="post" action="{{ path('product_review_save', {id: product.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('review_' ~ product.id) }}">
+
+                        <div class="mb-3">
+                            <label for="rating" class="form-label fw-semibold">Rating</label>
+                            <div class="star-rating">
+                                {% for value in [5, 4, 3, 2, 1] %}
+                                    <input
+                                        type="radio"
+                                        id="rating-{{ value }}"
+                                        name="rating"
+                                        value="{{ value }}"
+                                        {% if currentUserReview and currentUserReview.rating == value %}checked{% endif %}
+                                        required
+                                    >
+                                    <label for="rating-{{ value }}" title="{{ value }} star{{ value > 1 ? 's' : '' }}">
+                                        <i class="fa-solid fa-star"></i>
+                                    </label>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="comment" class="form-label fw-semibold">Comment (optional)</label>
+                            <textarea id="comment" name="comment" class="form-control" rows="4" maxlength="2000" placeholder="Share your feedback...">{{ currentUserReview ? currentUserReview.comment : '' }}</textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">
+                            {{ currentUserReview ? 'Update Review' : 'Submit Review' }}
+                        </button>
+
+                        <p class="text-muted small mt-2 mb-0">One review per user. You can edit your review anytime.</p>
+                    </form>
+                {% else %}
+                    <div class="alert alert-info mb-0">
+                        <a href="{{ path('app_login') }}">Login</a> to leave a rating and review.
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="card">
+            <div class="card-header fw-bold">Customer Reviews</div>
+            <div class="card-body">
+                {% if reviews is not empty %}
+                    <div class="d-flex flex-column gap-3">
+                        {% for review in reviews %}
+                            <div class="border rounded p-3">
+                                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                    <div>
+                                        <div class="fw-semibold">
+                                            {{ review.user.firstName }} {{ review.user.lastName }}
+                                            {% if app.user and app.user.id == review.user.id %}
+                                                <span class="badge bg-light text-brand border ms-1">Your review</span>
+                                            {% endif %}
+                                        </div>
+                                        <div class="text-warning small">
+                                            {% for i in 1..5 %}
+                                                {% if review.rating >= i %}
+                                                    <i class="fa-solid fa-star"></i>
+                                                {% else %}
+                                                    <i class="fa-regular fa-star"></i>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <span class="text-muted small">{{ review.createdAt|date('Y-m-d H:i') }}</span>
+                                </div>
+                                {% if review.comment %}
+                                    <p class="mb-0 mt-2">{{ review.comment|nl2br }}</p>
+                                {% else %}
+                                    <p class="mb-0 mt-2 text-muted">No comment provided.</p>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state py-4">
+                        <h3 class="h5">No reviews yet</h3>
+                        <p class="text-muted mb-0">Be the first to rate this product.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

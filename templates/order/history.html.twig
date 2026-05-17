@@ -2,50 +2,27 @@
 {% block title %}My Orders — SymPET{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <h2>📦 My Orders</h2>
-
-    {% if orders is empty %}
-        <div class="alert alert-info mt-3">
-            You have no orders yet.
-            <a href="{{ path('product_index') }}">Start shopping</a>
-        </div>
-    {% else %}
-        <table class="table table-hover mt-3">
-            <thead class="table-primary">
-                <tr>
-                    <th>Order #</th>
-                    <th>Date</th>
-                    <th>Total</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for order in orders %}
-                <tr>
-                    <td>#{{ order.id }}</td>
-                    <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
-                    <td class="fw-bold text-primary">{{ order.total }} TND</td>
-                    <td>
-                        {% if order.status == 'paid' %}
-                            <span class="badge bg-success">Paid</span>
-                        {% elseif order.status == 'pending' %}
-                            <span class="badge bg-warning">Pending</span>
-                        {% elseif order.status == 'shipped' %}
-                            <span class="badge bg-info">Shipped</span>
-                        {% else %}
-                            <span class="badge bg-danger">Cancelled</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{{ path('order_detail', {id: order.id}) }}"
-                           class="btn btn-sm btn-outline-primary">View Detail</a>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+<div class="page-hero mb-4">
+    <div class="eyebrow">Customer area</div>
+    <h1 class="display-6 fw-bold mb-0">My Orders</h1>
 </div>
+{% if orders is empty %}
+    <div class="empty-state"><h2 class="h4 fw-bold">You have no orders yet.</h2><p class="text-muted">Start shopping and your order history will appear here.</p><a href="{{ path('product_index') }}" class="btn btn-primary">Start shopping</a></div>
+{% else %}
+    <div class="card"><div class="table-responsive"><table class="table table-hover align-middle">
+        <thead><tr><th>Date</th><th>Total</th><th>Status</th><th class="text-end">Action</th></tr></thead>
+        <tbody>
+        {% for order in orders %}
+            <tr>
+                <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                <td class="fw-bold text-brand">{{ order.total }} TND</td>
+                <td>
+                    {% if order.status == 'paid' %}<span class="badge bg-success">Paid</span>{% elseif order.status == 'pending' %}<span class="badge bg-warning">Pending</span>{% elseif order.status == 'shipped' %}<span class="badge bg-info">Shipped</span>{% else %}<span class="badge bg-danger">Cancelled</span>{% endif %}
+                </td>
+                <td class="text-end"><a href="{{ path('order_detail', {id: order.id}) }}" class="btn btn-sm btn-outline-primary">View Detail</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table></div></div>
+{% endif %}
 {% endblock %}

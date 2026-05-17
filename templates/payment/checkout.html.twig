@@ -2,28 +2,34 @@
 {% block title %}Payment — SymPET{% endblock %}
 
 {% block body %}
-<div class="row">
-    <div class="col-md-7">
-        <h3>Payment</h3>
-        <div id="payment-element"></div>
-        <button id="submit-btn" class="btn btn-success mt-3 w-100">
-            Pay {{ total|number_format(2) }} €
-        </button>
-        <div id="error-msg" class="text-danger mt-2"></div>
-    </div>
-    <div class="col-md-5">
-        <h5>Order Summary</h5>
-        <hr>
-        {% for item in items %}
-        <div class="d-flex justify-content-between mb-2">
-            <span>{{ item.product.name }} × {{ item.qty }}</span>
-            <span>{{ item.subtotal|number_format(2) }} €</span>
+<div class="page-hero mb-4">
+    <div class="eyebrow">Secure checkout</div>
+    <h1 class="display-6 fw-bold mb-0">Complete your order</h1>
+</div>
+<div class="row g-4">
+    <div class="col-lg-7">
+        <div class="card h-100">
+            <div class="card-body p-4">
+                <h2 class="h4 fw-bold mb-3">Payment details</h2>
+                <div id="payment-element"></div>
+                <button id="submit-btn" class="btn btn-primary btn-lg mt-4 w-100">Pay {{ total|number_format(2) }} €</button>
+                <div id="error-msg" class="text-danger mt-3"></div>
+            </div>
         </div>
-        {% endfor %}
-        <hr>
-        <div class="d-flex justify-content-between fw-bold">
-            <span>Total</span>
-            <span>{{ total|number_format(2) }} €</span>
+    </div>
+    <div class="col-lg-5">
+        <div class="card h-100">
+            <div class="card-header fw-bold">Order Summary</div>
+            <div class="card-body p-4">
+                {% for item in items %}
+                    <div class="d-flex justify-content-between gap-3 mb-3">
+                        <span>{{ item.product.name }} × {{ item.qty }}</span>
+                        <strong>{{ item.subtotal|number_format(2) }} €</strong>
+                    </div>
+                {% endfor %}
+                <hr>
+                <div class="d-flex justify-content-between fw-bold fs-4"><span>Total</span><span class="text-brand">{{ total|number_format(2) }} €</span></div>
+            </div>
         </div>
     </div>
 </div>
@@ -48,13 +54,9 @@ fetch('{{ path('payment_intent') }}', {
 document.getElementById('submit-btn').addEventListener('click', async () => {
     const { error } = await stripe.confirmPayment({
         elements,
-        confirmParams: {
-            return_url: '{{ absolute_url(path('payment_success')) }}'
-        }
+        confirmParams: { return_url: '{{ absolute_url(path('payment_success')) }}' }
     });
-    if (error) {
-        document.getElementById('error-msg').textContent = error.message;
-    }
+    if (error) { document.getElementById('error-msg').textContent = error.message; }
 });
 </script>
 {% endblock %}

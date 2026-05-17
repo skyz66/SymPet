@@ -1,47 +1,17 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Product index{% endblock %}
-
+{% block title %}Products — Admin{% endblock %}
 {% block body %}
-    <h1>Product index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>ImageUrl</th>
-                <th>CreatedAt</th>
-                <th>AnimalType</th>
-                <th>actions</th>
-            </tr>
-        </thead>
+<div class="admin-shell">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4"><div><div class="eyebrow">Catalog</div><h1 class="display-6 fw-bold mb-0">Products</h1></div><div class="d-flex gap-2"><a href="{{ path('admin_dashboard') }}" class="btn btn-outline-secondary">Dashboard</a><a href="{{ path('app_admin_product_new') }}" class="btn btn-primary">Create new</a></div></div>
+    <div class="card"><div class="table-responsive"><table class="table table-hover align-middle">
+        <thead><tr><th>Id</th><th>Name</th><th>Price</th><th>Stock</th><th>Animal</th><th>Created</th><th class="text-end">Actions</th></tr></thead>
         <tbody>
         {% for product in products %}
-            <tr>
-                <td>{{ product.id }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.description }}</td>
-                <td>{{ product.price }}</td>
-                <td>{{ product.stock }}</td>
-                <td>{{ product.imageUrl }}</td>
-                <td>{{ product.createdAt ? product.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ product.animalType }}</td>
-                <td>
-                    <a href="{{ path('app_admin_product_show', {'id': product.id}) }}">show</a>
-                    <a href="{{ path('app_admin_product_edit', {'id': product.id}) }}">edit</a>
-                </td>
-            </tr>
+            <tr><td>{{ product.id }}</td><td><div class="fw-bold">{{ product.name }}</div><div class="small text-muted text-truncate" style="max-width: 360px;">{{ product.description }}</div></td><td class="fw-bold text-brand">{{ product.price }} TND</td><td><span class="badge {% if product.stock > 0 %}bg-success{% else %}bg-danger{% endif %}">{{ product.stock }}</span></td><td>{{ product.animalType }}</td><td>{{ product.createdAt ? product.createdAt|date('Y-m-d H:i:s') : '' }}</td><td class="text-end"><a href="{{ path('app_admin_product_show', {'id': product.id}) }}" class="btn btn-sm btn-outline-primary">Show</a> <a href="{{ path('app_admin_product_edit', {'id': product.id}) }}" class="btn btn-sm btn-primary">Edit</a></td></tr>
         {% else %}
-            <tr>
-                <td colspan="9">no records found</td>
-            </tr>
+            <tr><td colspan="7"><div class="empty-state my-3">No products found.</div></td></tr>
         {% endfor %}
         </tbody>
-    </table>
-
-    <a href="{{ path('app_admin_product_new') }}">Create new</a>
+    </table></div></div>
+</div>
 {% endblock %}

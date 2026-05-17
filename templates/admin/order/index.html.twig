@@ -1,23 +1,16 @@
 {% extends 'base.html.twig' %}
 {% block title %}Orders — Admin{% endblock %}
-
 {% block body %}
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>📦 Orders</h2>
+<div class="admin-shell">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <div><div class="eyebrow">Sales</div><h1 class="display-6 fw-bold mb-0">Orders</h1></div>
         <a href="{{ path('admin_dashboard') }}" class="btn btn-outline-secondary">← Dashboard</a>
     </div>
-
-    {# Pending Orders #}
-    <h4 class="text-warning">⏳ Pending ({{ pending|length }})</h4>
+    <div class="mb-3"><h2 class="h4 fw-bold text-warning">Pending <span class="badge bg-warning text-dark">{{ pending|length }}</span></h2></div>
     {% include 'admin/order/_table.html.twig' with {orders: pending, status: 'pending'} %}
-
-    {# Paid Orders #}
-    <h4 class="text-success mt-4">✅ Paid ({{ paid|length }})</h4>
+    <div class="mb-3"><h2 class="h4 fw-bold text-success">Paid <span class="badge bg-success">{{ paid|length }}</span></h2></div>
     {% include 'admin/order/_table.html.twig' with {orders: paid, status: 'paid'} %}
-
-    {# Shipped Orders #}
-    <h4 class="text-info mt-4">🚚 Shipped ({{ shipped|length }})</h4>
+    <div class="mb-3"><h2 class="h4 fw-bold text-info">Shipped <span class="badge bg-info text-dark">{{ shipped|length }}</span></h2></div>
     {% include 'admin/order/_table.html.twig' with {orders: shipped, status: 'shipped'} %}
 </div>
 {% endblock %}

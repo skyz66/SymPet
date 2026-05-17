@@ -1,20 +1,13 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Hello DashboardController!{% endblock %}
-
+{% block title %}Dashboard — SymPET{% endblock %}
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/laragon/www/sympet/src/Controller/DashboardController.php</code></li>
-        <li>Your template at <code>C:/laragon/www/sympet/templates/dashboard/index.html.twig</code></li>
-    </ul>
+<div class="page-hero text-center">
+    <div class="eyebrow">Welcome</div>
+    <h1 class="display-6 fw-bold">Hello {{ controller_name }}!</h1>
+    <p class="text-muted mb-4">Manage your SymPET experience from here.</p>
+    <div class="d-flex justify-content-center gap-2 flex-wrap">
+        <a href="{{ path('product_index') }}" class="btn btn-primary">Shop products</a>
+        <a href="{{ path('order_history') }}" class="btn btn-outline-primary">View orders</a>
+    </div>
 </div>
 {% endblock %}

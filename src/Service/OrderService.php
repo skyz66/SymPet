@@ -5,6 +5,8 @@ use App\Entity\Order;
 use App\Entity\OrderLine;
 use App\Entity\User;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Twig\Environment;
@@ -16,6 +18,7 @@ class OrderService
         private MailerInterface $mailer,
         private CartService $cartService,
         private Environment $twig,
+        private LoggerInterface $logger,
         private string $mailerFrom = 'rayenkaraborni138@gmail.com'
     ) {}
 
@@ -66,6 +69,15 @@ class OrderService
         $order->setStatus(Order::STATUS_PAID);
         $order->setStripePaymentId($stripeId);
         $this->em->flush();
-        $this->sendConfirmationEmail($order);
+
+        try {
+            $this->sendConfirmationEmail($order);
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('Failed to send order confirmation email.', [
+                'order_id' => $order->getId(),
+                'user_email' => $order->getUser()->getEmail(),
+                'error' => $e->getMessage(),
+            ]);
+        }
     }
 }

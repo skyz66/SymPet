@@ -1,20 +1,10 @@
 {% extends 'base.html.twig' %}
-
-{% block title %}Hello OrderController!{% endblock %}
-
+{% block title %}Orders — SymPET{% endblock %}
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/laragon/www/Symfony/outils/sympet6/src/Controller/OrderController.php</code></li>
-        <li>Your template at <code>C:/laragon/www/Symfony/outils/sympet6/templates/order/index.html.twig</code></li>
-    </ul>
+<div class="page-hero text-center">
+    <div class="eyebrow">Orders</div>
+    <h1 class="display-6 fw-bold">Your order space</h1>
+    <p class="text-muted mb-4">View your past purchases and follow your order status.</p>
+    <a href="{{ path('order_history') }}" class="btn btn-primary">Go to my orders</a>
 </div>
 {% endblock %}

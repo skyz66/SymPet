@@ -1,36 +1,28 @@
 {% if orders is empty %}
-    <p class="text-muted">No {{ status }} orders.</p>
+    <div class="empty-state mb-4"><p class="mb-0 text-muted">No {{ status }} orders.</p></div>
 {% else %}
-    <table class="table table-hover mb-4">
-        <thead class="table-light">
-            <tr>
-                <th>#</th>
-                <th>Customer</th>
-                <th>Date</th>
-                <th>Total</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+    <div class="card mb-4"><div class="table-responsive"><table class="table table-hover align-middle">
+        <thead><tr><th>Customer</th><th>Date</th><th>Total</th><th class="text-end">Actions</th></tr></thead>
         <tbody>
         {% for order in orders %}
             <tr>
-                <td>#{{ order.id }}</td>
                 <td>{{ order.user.firstName }} {{ order.user.lastName }}</td>
                 <td>{{ order.createdAt|date('d/m/Y H:i') }}</td>
-                <td class="fw-bold">{{ order.total }} TND</td>
-                <td class="d-flex gap-1">
+                <td class="fw-bold text-brand">{{ order.total }} TND</td>
+                <td class="text-end">
+                    <div class="d-flex justify-content-end gap-1 flex-wrap">
                     {% if status == 'pending' %}
-                        <a href="{{ path('admin_order_status', {id: order.id, status: 'paid'}) }}"
-                           class="btn btn-sm btn-success">Mark Paid</a>
-                        <a href="{{ path('admin_order_status', {id: order.id, status: 'cancelled'}) }}"
-                           class="btn btn-sm btn-danger">Cancel</a>
+                        <a href="{{ path('admin_order_status', {id: order.id, status: 'paid'}) }}" class="btn btn-sm btn-success">Mark Paid</a>
+                        <a href="{{ path('admin_order_status', {id: order.id, status: 'cancelled'}) }}" class="btn btn-sm btn-outline-danger">Cancel</a>
                     {% elseif status == 'paid' %}
-                        <a href="{{ path('admin_order_status', {id: order.id, status: 'shipped'}) }}"
-                           class="btn btn-sm btn-info">Mark Shipped</a>
+                        <a href="{{ path('admin_order_status', {id: order.id, status: 'shipped'}) }}" class="btn btn-sm btn-primary">Mark Shipped</a>
+                    {% else %}
+                        <span class="text-muted small">No action</span>
                     {% endif %}
+                    </div>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
-    </table>
+    </table></div></div>
 {% endif %}

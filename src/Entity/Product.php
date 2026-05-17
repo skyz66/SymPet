@@ -2,6 +2,8 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -38,9 +40,13 @@ class Product
     #[ORM\JoinColumn(nullable: false)]
     private ?Category $category = null;
 
+    #[ORM\OneToMany(mappedBy: 'product', targetEntity: ProductReview::class, orphanRemoval: true)]
+    private Collection $reviews;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->reviews = new ArrayCollection();
     }
 
     public function getId(): ?int { return $this->id; }
@@ -72,4 +78,27 @@ class Product
 
     public function getAnimalType(): ?string { return $this->animalType; }
     public function setAnimalType(?string $type): static { $this->animalType = $type; return $this; }
+
+    public function getReviews(): Collection { return $this->reviews; }
+
+    public function addReview(ProductReview $review): static
+    {
+        if (!$this->reviews->contains($review)) {
+            $this->reviews->add($review);
+            $review->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeReview(ProductReview $review): static
+    {
+        if ($this->reviews->removeElement($review)) {
+            if ($review->getProduct() === $this) {
+                $review->setProduct(null);
+            }
+        }
+
+        return $this;
+    }
 }

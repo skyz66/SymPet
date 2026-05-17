@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -41,6 +43,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private bool $isVerified = false;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Order::class)]
+    private Collection $orders;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ProductReview::class, orphanRemoval: true)]
+    private Collection $productReviews;
+
+    public function __construct()
+    {
+        $this->orders = new ArrayCollection();
+        $this->productReviews = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -140,4 +154,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getLastName(): ?string { return $this->lastName; }
     public function setLastName(?string $v): static { $this->lastName = $v; return $this; }
+
+    public function getOrders(): Collection { return $this->orders; }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            if ($order->getUser() === $this) {
+                $order->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getProductReviews(): Collection { return $this->productReviews; }
+
+    public function addProductReview(ProductReview $review): static
+    {
+        if (!$this->productReviews->contains($review)) {
+            $this->productReviews->add($review);
+            $review->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProductReview(ProductReview $review): static
+    {
+        if ($this->productReviews->removeElement($review)) {
+            if ($review->getUser() === $this) {
+                $review->setUser(null);
+            }
+        }
+
+        return $this;
+    }
 }

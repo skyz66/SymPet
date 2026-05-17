@@ -1,11 +1,9 @@
-<h1>Hi! Please confirm your email!</h1>
-
-<p>
-    Please confirm your email address by clicking the following link: <br><br>
-    <a href="{{ signedUrl|raw }}">Confirm my Email</a>.
-    This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.
-</p>
-
-<p>
-    Cheers!
-</p>
+<div style="font-family: Arial, sans-serif; background:#fff8ed; padding:32px; color:#24332f;">
+    <div style="max-width:620px; margin:auto; background:#ffffff; border-radius:18px; padding:28px; border:1px solid #f0dfc8;">
+        <h1 style="margin-top:0; color:#1f8a70;">Welcome to SymPET!</h1>
+        <p>Please confirm your email address by clicking the button below.</p>
+        <p style="margin:28px 0;"><a href="{{ signedUrl|raw }}" style="background:#1f8a70; color:white; text-decoration:none; padding:14px 20px; border-radius:999px; font-weight:bold;">Confirm my Email</a></p>
+        <p style="color:#6f7c78; font-size:14px;">This link will expire in {{ expiresAtMessageKey|trans(expiresAtMessageData, 'VerifyEmailBundle') }}.</p>
+        <p>Cheers,<br>The SymPET team</p>
+    </div>
+</div>
